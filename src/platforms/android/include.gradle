@@ -1,0 +1,13 @@
+/* Include.gradle configuration: http://docs.nativescript.org/plugins/plugins#includegradle-specification */
+
+android {
+	productFlavors {
+		"nativescript-tensorflow" {
+			dimension "nativescript-tensorflow"
+		}
+	}
+}
+
+dependencies {
+    compile 'org.tensorflow:tensorflow-lite:0.1.1'
+}

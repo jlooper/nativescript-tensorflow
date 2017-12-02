@@ -1,7 +1,7 @@
 {
     "name": "nativescript-tensorflow",
     "version": "1.0.0",
-    "description": "Your awesome NativeScript plugin.",
+    "description": "NativeScript plugin for Tensorflow Lite",
     "main": "tensorflow",
     "typings": "index.d.ts",
     "nativescript": {
@@ -13,34 +13,45 @@
     "scripts": {
         "tsc": "tsc -skipLibCheck",
         "build": "npm i && tsc",
-        "postclone": "npm i && node scripts/postclone.js && cd ../demo && npm i && cd ../src && npm run plugin.link",
-        "test.android": "npm i && npm run tsc && npm run tslint && cd ../demo && tns build android && tns test android --justlaunch",
-        "test.ios": "npm i && npm run tsc && npm run tslint && cd ../demo && tns build ios && tns test ios --justlaunch",
-        "tslint": "cd .. && tslint \"**/*.ts\" --config tslint.json --exclude \"**/node_modules/**\"",
-        "plugin.link": "npm link && cd ../demo && npm link nativescript-tensorflow && cd ../src",
+        "postclone":
+            "npm i && node scripts/postclone.js && cd ../demo && npm i && cd ../src && npm run plugin.link",
+        "test.android":
+            "npm i && npm run tsc && npm run tslint && cd ../demo && tns build android && tns test android --justlaunch",
+        "test.ios":
+            "npm i && npm run tsc && npm run tslint && cd ../demo && tns build ios && tns test ios --justlaunch",
+        "tslint":
+            "cd .. && tslint \"**/*.ts\" --config tslint.json --exclude \"**/node_modules/**\"",
+        "plugin.link":
+            "npm link && cd ../demo && npm link nativescript-tensorflow && cd ../src",
         "plugin.tscwatch": "npm run tsc -- -w",
-        "demo.ios": "npm i && npm run tsc && cd ../demo && tns run ios --syncAllFiles",
-        "demo.android": "npm i && npm run tsc && cd ../demo && tns run android --syncAllFiles",
+        "demo.ios":
+            "npm i && npm run tsc && cd ../demo && tns run ios --syncAllFiles",
+        "demo.android":
+            "npm i && npm run tsc && cd ../demo && tns run android --syncAllFiles",
         "demo.reset": "cd ../demo && rimraf platforms",
-        "plugin.prepare": "npm run tsc && cd ../demo && tns plugin remove nativescript-tensorflow && tns plugin add ../src",
-        "clean": "cd ../demo && rimraf hooks node_modules platforms && cd ../src && rimraf node_modules && npm run plugin.link",
-        "ci.tslint": "npm i && tslint '**/*.ts' --config '../tslint.json' --exclude '**/node_modules/**'"
+        "plugin.prepare":
+            "npm run tsc && cd ../demo && tns plugin remove nativescript-tensorflow && tns plugin add ../src",
+        "clean":
+            "cd ../demo && rimraf hooks node_modules platforms && cd ../src && rimraf node_modules && npm run plugin.link",
+        "ci.tslint":
+            "npm i && tslint '**/*.ts' --config '../tslint.json' --exclude '**/node_modules/**'"
     },
     "keywords": [
         "NativeScript",
         "JavaScript",
         "Android",
-        "iOS"
+        "iOS",
+        "TensorFlow Lite"
     ],
     "author": {
-        "name": "Your Name",
-        "email": "youremail@yourdomain.com"
+        "name": "MultiShiv19",
+        "email": "sp@shiv19.com"
     },
     "bugs": {
-        "url": "https://github.com/shiv19/nativescript-tensorflow/issues"
+        "url": "https://github.com/jlooper/nativescript-tensorflow/issues"
     },
     "license": "Apache-2.0",
-    "homepage": "https://github.com/shiv19/nativescript-tensorflow",
+    "homepage": "https://github.com/jlooper/nativescript-tensorflow",
     "readmeFilename": "README.md",
     "devDependencies": {
         "tns-core-modules": "^3.1.0",

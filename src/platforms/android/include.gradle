@@ -9,12 +9,9 @@ android {
 }
 
 repositories {
-    jcenter()
-    flatDir {
-      dirs 'libs'
-    }
-  }
+    maven { url 'http://dl.bintray.com/google/tensorflow/' }
+}
 
 dependencies {
-	compile (name:'tensorflow-lite-0.1.1', ext:'aar')
+    compile 'org.tensorflow:tensorflow-android:1.4.0@aar'
 }

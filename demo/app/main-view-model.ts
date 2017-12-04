@@ -1,14 +1,11 @@
-import { Observable } from 'tns-core-modules/data/observable';
-import { Tensorflow } from 'nativescript-tensorflow';
+import { Observable } from "tns-core-modules/data/observable";
 
 export class HelloWorldModel extends Observable {
-  public message: string;
-  private tensorflow: Tensorflow;
+    public message: string;
 
-  constructor() {
-    super();
+    constructor() {
+        super();
 
-    this.tensorflow = new Tensorflow();
-    this.message = this.tensorflow.message;
-  }
+        this.message = "Tensor Flow Plugin";
+    }
 }

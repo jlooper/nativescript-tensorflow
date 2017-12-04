@@ -1,6 +1,23 @@
-import { Common } from './tensorflow.common';
-export declare class Tensorflow extends Common {
-  // define your typings manually
-  // or..
-  // take the ios or android .d.ts files and copy/paste them here
-}
+export declare var DataType: typeof org.tensorflow.DataType;
+export declare var Graph: typeof org.tensorflow.Graph;
+export declare var OperationIterator: typeof org.tensorflow.Graph.OperationIterator;
+export declare var Reference: typeof org.tensorflow.Graph.Reference;
+export declare var NativeLibrary: typeof org.tensorflow.NativeLibrary;
+export declare var Operand: typeof org.tensorflow.Operand;
+export declare var Operation: typeof org.tensorflow.Operation;
+export declare var OperationBuilder: typeof org.tensorflow.OperationBuilder;
+export declare var Output: typeof org.tensorflow.Output;
+export declare var SavedModelBundle: typeof org.tensorflow.SavedModelBundle;
+export declare var Session: typeof org.tensorflow.Session;
+export declare var Run: typeof org.tensorflow.Session.Run;
+export declare var Runner: typeof org.tensorflow.Session.Runner;
+export declare var RunnerReference: typeof org.tensorflow.Session.Runner.Reference;
+export declare var Shape: typeof org.tensorflow.Shape;
+export declare var Tensor: typeof org.tensorflow.Tensor;
+export declare var TensorFlow: typeof org.tensorflow.TensorFlow;
+export declare var TensorFlowException: typeof org.tensorflow.TensorFlowException;
+export declare var Tensors: typeof org.tensorflow.Tensors;
+export declare var RunStats: typeof org.tensorflow.contrib.android.RunStats;
+export declare var TensorFlowInferenceInterface: typeof org.tensorflow.contrib.android.TensorFlowInferenceInterface;
+export declare var TensorId: typeof org.tensorflow.contrib.android.TensorFlowInferenceInterface.TensorId;
+export declare var UInt8: typeof org.tensorflow.types.UInt8;

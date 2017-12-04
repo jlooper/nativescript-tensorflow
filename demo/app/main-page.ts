@@ -11,6 +11,8 @@ let cameraDevice;
 let textureView;
 let cameraCaptureSessions;
 let captureRequestBuilder;
+let mBackgroundThread;
+let mBackgroundHandler;
 // Event handler for Page 'loaded' event attached in main-page.xml
 export function pageLoaded(args: observable.EventData) {
     // Get the event sender
@@ -19,8 +21,14 @@ export function pageLoaded(args: observable.EventData) {
     textureView = new android.view.TextureView(
         utils.ad.getApplicationContext()
     );
-    gridLayout.addChild(textureView);
+    // gridLayout.addChild(textureView);
+    gridLayout.nativeView.addView(textureView);
     textureView.setSurfaceTextureListener(textureListener);
+    startBackgroundThread();
+}
+
+export function pageUnloaded(args: observable.EventData) {
+    stopBackgroundThread();
 }
 
 textureListener = new android.view.TextureView.SurfaceTextureListener({
@@ -63,14 +71,18 @@ function createCameraPreview() {
             imageDimension.getWidth(),
             imageDimension.getHeight()
         );
-        const surface = new android.view.Surface(texture);
+        const surface: android.view.Surface = new android.view.Surface(texture);
         captureRequestBuilder = cameraDevice.createCaptureRequest(
             android.hardware.camera2.CameraDevice.TEMPLATE_PREVIEW
         );
         captureRequestBuilder.addTarget(surface);
-        cameraDevice.createCaptureSession(
-            java.util.Arrays.asList(surface),
-            new android.hardware.camera2.CameraCaptureSession.StateCallback({
+        const l: java.util.List<android.view.Surface> = new java.util.ArrayList<
+            android.view.Surface
+        >();
+        l.add(surface);
+
+        const ST2CB = android.hardware.camera2.CameraCaptureSession.StateCallback.extend(
+            {
                 onConfigured(cameraCaptureSession) {
                     //The camera is already closed
                     if (null == cameraDevice) {
@@ -83,9 +95,10 @@ function createCameraPreview() {
                 onConfigureFailed(cameraCaptureSession) {
                     console.log("Configuration change");
                 }
-            }),
-            null
+            }
         );
+
+        cameraDevice.createCaptureSession(l, new ST2CB(), null);
     } catch (e) {
         console.log("error createCameraPreview");
         console.log(e);
@@ -117,14 +130,37 @@ function updatePreview() {
     if (null == cameraDevice) {
         console.log("updatePreview error");
     }
-    captureRequestBuilder.set(
-        android.hardware.camera2.CaptureRequest.CONTROL_MODE,
-        android.hardware.camera2.CameraMetadata.CONTROL_MODE_AUTO
-    );
+
     try {
-        // cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, mBackgroundHandler);
+        // captureRequestBuilder.set(
+        //     android.hardware.camera2.CaptureRequest.CONTROL_MODE,
+        //     android.hardware.camera2.CameraMetadata.CONTROL_MODE_AUTO
+        // );
+        cameraCaptureSessions.setRepeatingRequest(
+            captureRequestBuilder.build(),
+            null,
+            mBackgroundHandler
+        );
     } catch (e) {
         console.log("Error in update Preview");
+        console.log(e);
+    }
+}
+
+function startBackgroundThread() {
+    mBackgroundThread = new android.os.HandlerThread("Camera Background");
+    mBackgroundThread.start();
+    mBackgroundHandler = new android.os.Handler(mBackgroundThread.getLooper());
+}
+
+function stopBackgroundThread() {
+    mBackgroundThread.quitSafely();
+    try {
+        mBackgroundThread.join();
+        mBackgroundThread = null;
+        mBackgroundHandler = null;
+    } catch (e) {
+        console.log("error");
         console.log(e);
     }
 }

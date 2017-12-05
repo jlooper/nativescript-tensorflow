@@ -2,6 +2,8 @@ import * as observable from "tns-core-modules/data/observable";
 import * as pages from "tns-core-modules/ui/page";
 import * as app from "tns-core-modules/application";
 import * as utils from "tns-core-modules/utils/utils";
+import { TensorFlowImageClassifier } from "./tensorflow/ImageClassifier";
+import { ImageUtils } from "./tensorflow/ImageUtils";
 
 let gridLayout;
 let textureListener;
@@ -13,6 +15,31 @@ let cameraCaptureSessions;
 let captureRequestBuilder;
 let mBackgroundThread;
 let mBackgroundHandler;
+const SAVE_PREVIEW_BITMAP = false;
+let rgbFrameBitmap: android.graphics.Bitmap;
+let croppedBitmap: android.graphics.Bitmap;
+let cropCopyBitmap: android.graphics.Bitmap;
+
+let lastProcessingTimeMs;
+
+const INPUT_SIZE = 224;
+const IMAGE_MEAN = 117;
+const IMAGE_STD = 1;
+const INPUT_NAME = "input";
+const OUTPUT_NAME = "output";
+
+const MODEL_FILE = "./assets/tensorflow_inception_graph.pb";
+const LABEL_FILE = "./assets/imagenet_comp_graph_label_strings.txt";
+
+const MAINTAIN_ASPECT = true;
+
+const DESIRED_PREVIEW_SIZE = new android.util.Size(640, 480);
+
+let sensorOrientation;
+let classifier;
+let frameToCropTransform;
+let cropToFrameTransform;
+
 // Event handler for Page 'loaded' event attached in main-page.xml
 export function pageLoaded(args: observable.EventData) {
     // Get the event sender
@@ -70,6 +97,7 @@ function createCameraPreview() {
             imageDimension.getWidth(),
             imageDimension.getHeight()
         );
+
         const surface: android.view.Surface = new android.view.Surface(texture);
         captureRequestBuilder = cameraDevice.createCaptureRequest(
             android.hardware.camera2.CameraDevice.TEMPLATE_PREVIEW
@@ -98,59 +126,62 @@ function createCameraPreview() {
         );
 
         cameraDevice.createCaptureSession(l, new ST2CB(), null);
+
+        classifier = TensorFlowImageClassifier.create(
+            app.andoird.context.getAssets(),
+            MODEL_FILE,
+            LABEL_FILE,
+            INPUT_SIZE,
+            IMAGE_MEAN,
+            IMAGE_STD,
+            INPUT_NAME,
+            OUTPUT_NAME
+        );
+
+        const previewWidth = imageDimension.getWidth();
+        const previewHeight = imageDimension.getHeight();
+
+        const sensorOrientation = 0; // TODO: Fix this part
+
+        console.log(
+            "Camera orientation relative to screen canvas: %d",
+            sensorOrientation
+        );
+        console.log("Initializing at size %dx%d", previewWidth, previewHeight);
+
+        rgbFrameBitmap = android.graphics.Bitmap.createBitmap(
+            previewWidth,
+            previewHeight,
+            android.graphics.Bitmap.Config.ARGB_8888
+        );
+        croppedBitmap = android.graphics.Bitmap.createBitmap(
+            INPUT_SIZE,
+            INPUT_SIZE,
+            android.graphics.Bitmap.Config.ARGB_8888
+        );
+
+        frameToCropTransform = ImageUtils.getTransformationMatrix(
+            previewWidth,
+            previewHeight,
+            INPUT_SIZE,
+            INPUT_SIZE,
+            sensorOrientation,
+            MAINTAIN_ASPECT
+        );
+
+        cropToFrameTransform = new android.graphics.Matrix();
+        frameToCropTransform.invert(cropToFrameTransform);
+        processImage();
     } catch (e) {
         console.log("error createCameraPreview");
         console.log(e);
     }
 }
 
-function openCamera() {
-    const manager: any = utils.ad
-        .getApplicationContext()
-        .getSystemService(android.content.Context["CAMERA_SERVICE"]);
-    try {
-        cameraId = manager.getCameraIdList()[0];
-        const characteristics = manager.getCameraCharacteristics(cameraId);
-        const map = characteristics.get(
-            android.hardware.camera2.CameraCharacteristics
-                .SCALER_STREAM_CONFIGURATION_MAP
-        );
-        imageDimension = map.getOutputSizes(
-            android.graphics.SurfaceTexture.class
-        )[0];
-        manager.openCamera(cameraId, stateCallback, null);
-    } catch (e) {
-        console.log("error");
-        console.log(e);
-    }
-}
+function getRgbBytes() {}
 
-function updatePreview() {
-    if (null == cameraDevice) {
-        console.log("updatePreview error");
-    }
-
-    try {
-        // This part doesn't seem to work
-        // captureRequestBuilder.set(
-        //     android.hardware.camera2.CaptureRequest.CONTROL_MODE,
-        //     android.hardware.camera2.CameraMetadata.CONTROL_MODE_AUTO
-        // );
-        cameraCaptureSessions.setRepeatingRequest(
-            captureRequestBuilder.build(),
-            null,
-            mBackgroundHandler
-        );
-    } catch (e) {
-        console.log("Error in update Preview");
-        console.log(e);
-    }
-}
-
-function startBackgroundThread() {
-    mBackgroundThread = new android.os.HandlerThread("Camera Background");
-    mBackgroundThread.start();
-    mBackgroundHandler = new android.os.Handler(mBackgroundThread.getLooper());
+function processImage() {
+    // TODO: Finish implementing camera activity first, then come here
 }
 
 function stopBackgroundThread() {

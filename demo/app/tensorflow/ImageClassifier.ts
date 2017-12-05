@@ -3,7 +3,7 @@ import { TensorFlowInferenceInterface } from "nativescript-tensorflow";
 /**
  * Generic interface for interacting with different recognition engines.
  */
-interface Classifier {
+export interface Classifier {
     recognizeImage(
         bitmap: android.graphics.Bitmap
     ): java.util.List<Classifier.Recognition>;
@@ -11,7 +11,7 @@ interface Classifier {
     getStatString(): string;
     close(): void;
 }
-namespace Classifier {
+export namespace Classifier {
     /**
      * An immutable result returned by a Classifier describing what was recognized.
      */
@@ -85,7 +85,7 @@ namespace Classifier {
 }
 
 /** A classifier specialized to label images using TensorFlow. */
-class TensorFlowImageClassifier implements Classifier {
+export class TensorFlowImageClassifier implements Classifier {
     // Only return this many results with at least this confidence.
     static MAX_RESULTS = 3;
     static THRESHOLD = 0.1;

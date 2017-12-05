@@ -28,13 +28,13 @@ export function pageLoaded(args: observable.EventData) {
 }
 
 export function pageUnloaded(args: observable.EventData) {
+    console.log("Stopping background thread");
     stopBackgroundThread();
 }
 
 textureListener = new android.view.TextureView.SurfaceTextureListener({
     onSurfaceTextureAvailable: function(surface, width, height) {
         //open your camera here
-        console.log("trying to open camera");
         openCamera();
     },
     onSurfaceTextureSizeChanged: function(surface, width, height) {
@@ -49,7 +49,6 @@ textureListener = new android.view.TextureView.SurfaceTextureListener({
 const STCB = android.hardware.camera2.CameraDevice.StateCallback.extend({
     onOpened: function(camera) {
         //This is called when the camera is open
-        console.log("Camera Opened");
         cameraDevice = camera;
         createCameraPreview();
     },
@@ -132,6 +131,7 @@ function updatePreview() {
     }
 
     try {
+        // This part doesn't seem to work
         // captureRequestBuilder.set(
         //     android.hardware.camera2.CaptureRequest.CONTROL_MODE,
         //     android.hardware.camera2.CameraMetadata.CONTROL_MODE_AUTO
